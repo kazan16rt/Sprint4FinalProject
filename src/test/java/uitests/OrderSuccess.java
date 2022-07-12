@@ -39,9 +39,8 @@ public class OrderSuccess extends BaseTest {
 
         return new Object[][] {
                 {"Артемпятнадцать", "Моховпятнадцать", "г. Москва, ул. Московская, д. 2", "Черкизовская", "89991234567", "01.09.2022", "сутки", true, false, "Комментарий"},
-                {"Ан", "По", "г. Иннополис", "Бульвар Рокоссовского", "71234567890", "31.12.2022", "двое суток", false, true, ""},
-                {"Иван", "Петров", "г. Санкт-Петербург", "Преображенская площадь", "91234567890", "05.07.2022", "семеро суток", false, false, ""},
-                {"Максим", "Крыльцов", "г. Воронеж", "Лихоборы", "11234567890", "01.01.2022", "шестеро суток", true, true, "Комментарий"},
+                {"Ан", "По", "г. Санкт-Петербург", "Сокольники", "91234567890", "31.12.2022", "семеро суток", false, false, ""},
+                {"Максим", "Петров", "г. Воронеж", "Лихоборы", "11234567890", "01.01.2022", "шестеро суток", true, true, "Комментарий"},
         };
     }
 
@@ -51,6 +50,29 @@ public class OrderSuccess extends BaseTest {
                 .open()
                 .clickAcceptCookieButton()
                 .clickOrderHeaderButton()
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setDeliveryAddress(deliveryAddress)
+                .setMetroStation(metroStation)
+                .setPhoneNumber(phoneNumber)
+                .clickNextButton()
+                .setDeliveryDate(deliveryDate)
+                .setRentalPeriod(rentalPeriod)
+                .setBlackScooterCheckbox(blackScooterCheckbox)
+                .setGreyScooterCheckbox(greyScooterCheckbox)
+                .setCommentForCourier(commentForCourier)
+                .clickSubmitButton()
+                .clickConfirmButton()
+                .waitSuccessScreen()
+                .isSuccessScreenDisplayed();
+        assertTrue("Экран успешного заказа самоката не отображается", isSuccessScreenDisplayed);
+    }
+    @Test
+    public void checkSuccessOrderUsingHomeButton() {
+        boolean isSuccessScreenDisplayed = new HomePageSamokat(driver)
+                .open()
+                .clickAcceptCookieButton()
+                .clickOrderHomeButton()
                 .setFirstName(firstName)
                 .setLastName(lastName)
                 .setDeliveryAddress(deliveryAddress)

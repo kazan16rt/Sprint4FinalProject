@@ -9,44 +9,18 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.ArrayList;
 
+import static testdata.Questions.ANSWERS;
+
 public class HomePageSamokat extends BasePage {
     public static final String HOME_URL = "https://qa-scooter.praktikum-services.ru/";
     public HomePageSamokat(WebDriver driver) {
         this.driver = driver;
     }
 
-    // Вопрос в аккордионе № 1
-    private By accordionHeading_1 = By.id("accordion__heading-0");
-    // Вопрос в аккордионе № 2
-    private By accordionHeading_2 = By.id("accordion__heading-1");
-    // Вопрос в аккордионе № 3
-    private By accordionHeading_3 = By.id("accordion__heading-2");
-    // Вопрос в аккордионе № 4
-    private By accordionHeading_4 = By.id("accordion__heading-3");
-    // Вопрос в аккордионе № 5
-    private By accordionHeading_5 = By.id("accordion__heading-4");
-    // Вопрос в аккордионе № 6
-    private By accordionHeading_6 = By.id("accordion__heading-5");
-    // Вопрос в аккордионе № 7
-    private By accordionHeading_7 = By.id("accordion__heading-6");
-    // Вопрос в аккордионе № 8
-    private By accordionHeading_8 = By.id("accordion__heading-7");
-    // Панель в аккордионе № 1
-    private By accordionPanel_1 = By.xpath(".//div[@id='accordion__panel-0']/p");
-    // Панель в аккордионе № 2
-    private By accordionPanel_2 = By.xpath(".//div[@id='accordion__panel-1']/p");
-    // Панель в аккордионе № 3
-    private By accordionPanel_3 = By.xpath(".//div[@id='accordion__panel-2']/p");
-    // Панель в аккордионе № 4
-    private By accordionPanel_4 = By.xpath(".//div[@id='accordion__panel-3']/p");
-    // Панель в аккордионе № 5
-    private By accordionPanel_5 = By.xpath(".//div[@id='accordion__panel-4']/p");
-    // Панель в аккордионе № 6
-    private By accordionPanel_6 = By.xpath(".//div[@id='accordion__panel-5']/p");
-    // Панель в аккордионе № 7
-    private By accordionPanel_7 = By.xpath(".//div[@id='accordion__panel-6']/p");
-    // Панель в аккордионе № 8
-    private By accordionPanel_8 = By.xpath(".//div[@id='accordion__panel-7']/p");
+    // Шаблон вопросов в аккордионе
+    private String questionTemplate = "accordion__heading-%s";
+    // Шаблон ответов в аккордионе
+    private String answerTemplate = ".//div[@id='accordion__panel-%s']/p";
     // Кнопка "Заказать" в хедере
     private By orderHeaderButton = By.cssSelector("div.Header_Nav__AGCXC button.Button_Button__ra12g");
     // Кнопка "Заказать" на домашней странице
@@ -76,6 +50,10 @@ public class HomePageSamokat extends BasePage {
         driver.findElement(orderHeaderButton).click();
         return new OrderPageSamokat(driver);
     }
+    public OrderPageSamokat clickOrderHomeButton() {
+        driver.findElement(orderHomeButton).click();
+        return new OrderPageSamokat(driver);
+    }
     public HomePageSamokat clickOrderStatusButton() {
         driver.findElement(orderStatusButton).click();
         return this;
@@ -89,9 +67,6 @@ public class HomePageSamokat extends BasePage {
     public HomePageSamokat clickGoButton() {
         driver.findElement(goButton).click();
         return this;
-    }
-    public void clickSamokatLogo() {
-        driver.findElement(samokatLogo).click();
     }
     public HomePageSamokat clickYandexButton() {
         driver.findElement(yandexButton).click();
@@ -128,102 +103,26 @@ public class HomePageSamokat extends BasePage {
         }
         return this;
     }
-    public HomePageSamokat clickAccordionHeading_1() {
-        driver.findElement(accordionHeading_1).click();
+    public HomePageSamokat clickAccordionHeading(int questionNumber) {
+        By accordionHeading = By.id(String.format(questionTemplate, questionNumber));
+        driver.findElement(accordionHeading).click();
         return this;
     }
-    public HomePageSamokat clickAccordionHeading_2() {
-        driver.findElement(accordionHeading_2).click();
-        return this;
-    }
-    public HomePageSamokat clickAccordionHeading_3() {
-        driver.findElement(accordionHeading_3).click();
-        return this;
-    }
-    public HomePageSamokat clickAccordionHeading_4() {
-        driver.findElement(accordionHeading_4).click();
-        return this;
-    }
-    public HomePageSamokat clickAccordionHeading_5() {
-        driver.findElement(accordionHeading_5).click();
-        return this;
-    }
-    public HomePageSamokat clickAccordionHeading_6() {
-        driver.findElement(accordionHeading_6).click();
-        return this;
-    }
-    public HomePageSamokat clickAccordionHeading_7() {
-        driver.findElement(accordionHeading_7).click();
-        return this;
-    }
-    public HomePageSamokat clickAccordionHeading_8() {
-        driver.findElement(accordionHeading_8).click();
-        return this;
-    }
-    public HomePageSamokat checkTextAccordionPanel_1() {
+    public HomePageSamokat checkTextAccordionPanel(int answerNumber) {
+        By accordionPanel = By.xpath(String.format(answerTemplate, answerNumber));
         new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel_1));
-        String actual = driver.findElement(accordionPanel_1).getText();
-        String expected = "Сутки — 400 рублей. Оплата курьеру — наличными или картой.";
-        Assert.assertEquals("Текст панели вопроса № 1 не совпадает с ожидаемым", expected, actual);
+                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel));
+        String actual = driver.findElement(accordionPanel).getText();
+        String expected = ANSWERS[answerNumber];
+        Assert.assertEquals("Текст панели вопроса № " +answerNumber + " не совпадает с ожидаемым ответом", expected, actual);
         return this;
     }
-    public HomePageSamokat checkTextAccordionPanel_2() {
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel_2));
-        String actual = driver.findElement(accordionPanel_2).getText();
-        String expected = "Пока что у нас так: один заказ — один самокат. Если хотите покататься с друзьями, можете просто сделать несколько заказов — один за другим.";
-        Assert.assertEquals("Текст панели вопроса № 2 не совпадает с ожидаемым", expected, actual);
-        return this;
-    }
-    public HomePageSamokat checkTextAccordionPanel_3() {
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel_3));
-        String actual = driver.findElement(accordionPanel_3).getText();
-        String expected = "Допустим, вы оформляете заказ на 8 мая. Мы привозим самокат 8 мая в течение дня. Отсчёт времени аренды начинается с момента, когда вы оплатите заказ курьеру. Если мы привезли самокат 8 мая в 20:30, суточная аренда закончится 9 мая в 20:30.";
-        Assert.assertEquals("Текст панели вопроса № 3 не совпадает с ожидаемым", expected, actual);
-        return this;
-    }
-    public HomePageSamokat checkTextAccordionPanel_4() {
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel_4));
-        String actual = driver.findElement(accordionPanel_4).getText();
-        String expected = "Только начиная с завтрашнего дня. Но скоро станем расторопнее.";
-        Assert.assertEquals("Текст панели вопроса № 4 не совпадает с ожидаемым", expected, actual);
-        return this;
-    }
-    public HomePageSamokat checkTextAccordionPanel_5() {
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel_5));
-        String actual = driver.findElement(accordionPanel_5).getText();
-        String expected = "Пока что нет! Но если что-то срочное — всегда можно позвонить в поддержку по красивому номеру 1010.";
-        Assert.assertEquals("Текст панели вопроса № 5 не совпадает с ожидаемым", expected, actual);
-        return this;
-    }
-    public HomePageSamokat checkTextAccordionPanel_6() {
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel_6));
-        String actual = driver.findElement(accordionPanel_6).getText();
-        String expected = "Самокат приезжает к вам с полной зарядкой. Этого хватает на восемь суток — даже если будете кататься без передышек и во сне. Зарядка не понадобится.";
-        Assert.assertEquals("Текст панели вопроса № 6 не совпадает с ожидаемым", expected, actual);
-        return this;
-    }
-    public HomePageSamokat checkTextAccordionPanel_7() {
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel_7));
-        String actual = driver.findElement(accordionPanel_7).getText();
-        String expected = "Да, пока самокат не привезли. Штрафа не будет, объяснительной записки тоже не попросим. Все же свои.";
-        Assert.assertEquals("Текст панели вопроса № 7 не совпадает с ожидаемым", expected, actual);
-        return this;
-    }
-    public HomePageSamokat checkTextAccordionPanel_8() {
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOfElementLocated(accordionPanel_8));
-        String actual = driver.findElement(accordionPanel_8).getText();
-        String expected = "Да, обязательно. Всем самокатов! И Москве, и Московской области.";
-        Assert.assertEquals("Текст панели вопроса № 8 не совпадает с ожидаемым", expected, actual);
-        return this;
-    }
+    public void checkAllAnswersInQuestions() {
+      for(int i = 0; i < ANSWERS.length; i++) {
+          clickAccordionHeading(i);
+          checkTextAccordionPanel(i);
+      }
+    };
     public OrderPageSamokat waitOrderPage() {
         new WebDriverWait(driver, Duration.ofSeconds(3))
                 .until(ExpectedConditions.visibilityOfElementLocated(headerOrderPage));

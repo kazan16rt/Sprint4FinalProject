@@ -14,6 +14,10 @@ public class OrderPageSamokat extends BasePage {
         this.driver = driver;
     }
 
+    // Шаблон для полей заказа
+    private String orderFieldTemplate = ".//input[@placeholder='%s']";
+    // Шаблон для ошибок в полях заказа
+    private String orderFieldErrorTemplate = ".//div[text()='%s']";
     // Поле ввода Имя
     private By firstName = By.xpath(".//input[@placeholder='* Имя']");
     // Поле ввода Фамилия
@@ -21,7 +25,7 @@ public class OrderPageSamokat extends BasePage {
     // Поле ввода Адрес доставки
     private By deliveryAddress = By.xpath(".//input[@placeholder='* Адрес: куда привезти заказ']");
     // Поле ввода Станция метро
-    private By metroStation = By.className("select-search__input");
+    private By metroStation = By.xpath(".//input[@placeholder='* Станция метро']");
     // Поле ввода Телефон
     private By phoneNumber = By.xpath(".//input[@placeholder='* Телефон: на него позвонит курьер']");
 
@@ -49,19 +53,22 @@ public class OrderPageSamokat extends BasePage {
     private By headerOrderPage = By.xpath(".//div[text()='Для кого самокат']");
     // Логотип Самокат на домашней странице
     private By samokatLogo = By.cssSelector("img[alt='Scooter']");
-    // Ошибка "Введите корректное имя" в поле "Имя"
-    private By firstnameError = By.xpath(".//div[text()='Введите корректное имя']");
-    // Ошибка "Введите корректную фамилию" в поле "Фамилия"
-    private By lastnameError = By.xpath(".//div[text()='Введите корректную фамилию']");
-    // Ошибка "Введите корректный адрес" в поле "Адрес"
-    private By addressError = By.xpath(".//div[text()='Введите корректный адрес']");
-    // Ошибка "Введите корректный номер" в поле "Телефон"
-    private By phoneNumberError = By.xpath(".//div[text()='Введите корректный номер']");
-    // Ошибка "Выберите станцию" в поле "Станция метро"
-    private By metroStationError = By.xpath(".//div[text()='Выберите станцию']");
 
+    public OrderPageSamokat setOrderField(String fieldName, String value) {
+        By orderField = By.xpath(String.format(orderFieldTemplate, fieldName));
+        driver.findElement(orderField).sendKeys(value + Keys.ESCAPE);
+        clickNextButton();
+        return this;
+    }
+        public String getErrorTextFromOrderField(String errorText) {
+            By orderFieldError = By.xpath(String.format(orderFieldErrorTemplate, errorText));
+            new WebDriverWait(driver, Duration.ofSeconds(3))
+                    .until(ExpectedConditions.visibilityOfElementLocated(orderFieldError));
+        String text = driver.findElement(orderFieldError).getText();
+        return text;
+    }
     public OrderPageSamokat setFirstName(String name) {
-        driver.findElement(firstName).sendKeys(name + Keys.TAB);
+        driver.findElement(firstName).sendKeys(name + Keys.ESCAPE);
         return this;
     }
     public OrderPageSamokat setLastName(String surname) {
@@ -74,7 +81,10 @@ public class OrderPageSamokat extends BasePage {
     }
     public OrderPageSamokat setMetroStation(String metro) {
         driver.findElement(metroStation).sendKeys(metro);
-        driver.findElement(By.xpath(".//*[text()='" + metro + "']")).click();
+        By metroStation = By.xpath(".//*[text()='" + metro + "']");
+        new WebDriverWait(driver, Duration.ofSeconds(3))
+                .until(ExpectedConditions.visibilityOfElementLocated(metroStation));
+        driver.findElement(metroStation).click();
         return this;
     }
     public OrderPageSamokat setPhoneNumber(String number) {
@@ -138,25 +148,4 @@ public class OrderPageSamokat extends BasePage {
         driver.findElement(samokatLogo).click();
         return new HomePageSamokat(driver);
     }
-    public String getErrorTextFromFirstName() {
-        String text = driver.findElement(firstnameError).getText();
-        return text;
-    }
-    public String getErrorTextFromLastName() {
-        String text = driver.findElement(lastnameError).getText();
-        return text;
-    }
-    public String getErrorTextFromAddress() {
-        String text = driver.findElement(addressError).getText();
-        return text;
-    }
-    public String getErrorTextFromPhoneNumber() {
-        String text = driver.findElement(phoneNumberError).getText();
-        return text;
-    }
-    public String getErrorTextFromMetroStation() {
-        String text = driver.findElement(metroStationError).getText();
-        return text;
-    }
-
 }

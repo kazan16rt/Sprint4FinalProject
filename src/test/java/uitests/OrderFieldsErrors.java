@@ -1,57 +1,42 @@
 package uitests;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import pageobjects.HomePageSamokat;
 
 import static org.junit.Assert.assertEquals;
+import static testdata.FieldNames.*;
 import static testdata.OrderErrors.*;
-
+@RunWith(Parameterized.class)
 public class OrderFieldsErrors extends BaseTest {
-
-    @Test
-    public void checkErrorFirstNameField() {
-        String errorTextFromFirstName = new HomePageSamokat(driver)
-                .open()
-                .clickOrderHeaderButton()
-                .setFirstName("S")
-                .getErrorTextFromFirstName();
-        assertEquals("Ошибка в поле Имя отличается от ожидаемого текста ошибки: " + FIRST_NAME_ERROR, FIRST_NAME_ERROR, errorTextFromFirstName);
+    private final String fieldName;
+    private final String value;
+    private final String errorText;
+    public OrderFieldsErrors(String fieldName, String value, String errorText) {
+        this.fieldName = fieldName;
+        this.value = value;
+        this.errorText = errorText;
+    }
+    @Parameterized.Parameters
+    public static Object[][] getFieldErrors() {
+        return new Object[][] {
+                {FIRST_NAME, "Q", FIRST_NAME_ERROR},
+                {LAST_NAME, "Q", LAST_NAME_ERROR},
+                {ADDRESS, "Q", ADDRESS_ERROR},
+                {METRO_STATION, "Q", METRO_STATION_ERROR},
+                {PHONE_NUMBER, "Q", PHONE_NUMBER_ERROR},
+        };
     }
     @Test
-    public void checkErrorLastNameField() {
-        String errorTextFromLastName = new HomePageSamokat(driver)
+    public void checkOrderFieldErrors() {
+        String errorTextFromField = new HomePageSamokat(driver)
                 .open()
+                .clickAcceptCookieButton()
                 .clickOrderHeaderButton()
-                .setLastName("S")
-                .getErrorTextFromLastName();
-        assertEquals("Ошибка в поле Фамилия отличается от ожидаемого текста ошибки: " + LAST_NAME_ERROR, LAST_NAME_ERROR, errorTextFromLastName);
-    }
-    @Test
-    public void checkErrorAddressField() {
-        String errorTextFromAddress = new HomePageSamokat(driver)
-                .open()
-                .clickOrderHeaderButton()
-                .setDeliveryAddress("S")
-                .getErrorTextFromAddress();
-        assertEquals("Ошибка в поле Адресс отличается от ожидаемого текста ошибки: " + ADDRESS_ERROR, ADDRESS_ERROR, errorTextFromAddress);
-    }
-    @Test
-    public void checkErrorMetroStationField() {
-        String errorTextFromMetroStation = new HomePageSamokat(driver)
-                .open()
-                .clickOrderHeaderButton()
-                .clickNextButton()
-                .getErrorTextFromMetroStation();
-        assertEquals("Ошибка в поле Станция метро отличается от ожидаемого текста ошибки: " + METRO_STATION_ERROR, METRO_STATION_ERROR, errorTextFromMetroStation);
-    }
-    @Test
-    public void checkErrorPhoneNumberField() {
-        String errorTextFromPhoneNumber = new HomePageSamokat(driver)
-                .open()
-                .clickOrderHeaderButton()
-                .setPhoneNumber("1")
-                .getErrorTextFromPhoneNumber();
-        assertEquals("Ошибка в поле Телефон отличается от ожидаемого текста ошибки: " + PHONE_NUMBER_ERROR, PHONE_NUMBER_ERROR, errorTextFromPhoneNumber);
+                .setOrderField(fieldName, value)
+                .getErrorTextFromOrderField(errorText);
+        assertEquals("Ошибка в поле Имя отличается от ожидаемого текста ошибки: " + errorText, errorText, errorTextFromField);
     }
 }
 
